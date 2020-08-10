@@ -1,134 +1,3 @@
-class restaurant {
-
-   constructor(id, objetRestoJson) {
-      if (objetRestoJson) {
-         this.restaurantNom = objetRestoJson.restaurantName;
-         this.addresseResto = objetRestoJson.address;
-         this.avis = objetRestoJson.ratings;
-      } else {
-         // Initialiser le tratings a vide.
-         this.avis = [];
-      }
-      // Identifiant unique permettant de manipuler le DOM sidebar à partir de l'objet
-      this.id = "restaurant_" + id;
-      // Indice du li dans la liste ul : déroulant du li via Materialize
-      this.indice = id;
-      // Initialisation de la moyenne 
-      this.MoyenneNote = this.MoyNote;
-
-   }
-}
-
-
-let lesRestos = [{
-      "restaurantName": "Bronco",
-      "address": "39 Rue des Petites Écuries, 75010 Paris",
-      "lat": 48.8737815,
-      "long": 2.3501649,
-      "ratings": [{
-            "stars": 4,
-            "comment": "Un excellent restaurant, j'y reviendrai ! Par contre il vaut mieux aimer la viande."
-         },
-         {
-            "stars": 5,
-            "comment": "Tout simplement mon restaurant préféré !"
-         }
-      ]
-   },
-   {
-      "restaurantName": "Babalou",
-      "address": "4 Rue Lamarck, 75018 Paris",
-      "lat": 48.8865035,
-      "long": 2.3442197,
-      "ratings": [{
-            "stars": 5,
-            "comment": "Une minuscule pizzeria délicieuse cachée juste à côté du Sacré choeur !"
-         },
-         {
-            "stars": 3,
-            "comment": "J'ai trouvé ça correct, sans plus"
-         }
-      ]
-   },
-   {
-      "restaurantName": "maxily",
-      "address": "4 Rue maubeuge, 75009 Paris",
-      "lat": 48.8865035,
-      "long": 2.6742197,
-      "ratings": [{
-            "stars": 5,
-            "comment": "Un moment fantastique et inoubliable"
-         },
-         {
-            "stars": 3,
-            "comment": "L'equipe est trop sympa et serviable"
-         }
-      ]
-   },
-   {
-      "restaurantName": "Venus Moment",
-      "address": "4 rue vaugirard, 75006 Paris",
-      "lat": 48.7865035,
-      "long": 2.1442197,
-      "ratings": [{
-            "stars": 5,
-            "comment": "Une minuscule pizzeria délicieuse cachée juste à côté du Sacré choeur !"
-         },
-         {
-            "stars": 3,
-            "comment": "J'ai trouvé ça correct, sans plus"
-         }
-      ]
-   },
-   {
-      "restaurantName": "Resto Paris",
-      "address": "4 rue vauxaul, 75006 Paris",
-      "lat": 48.2865035,
-      "long": 2.3442197,
-      "ratings": [{
-            "stars": 2,
-            "comment": "Une minuscule pizzeria délicieuse cachée juste à côté du Sacré choeur !"
-         },
-         {
-            "stars": 3,
-            "comment": "J'ai trouvé ça correct, sans plus"
-         }
-      ]
-   },
-   {
-      "restaurantName": "African food",
-      "address": "2 rue parot, 75006 Paris",
-      "lat": 48.1887035,
-      "long": 2.3402197,
-      "ratings": [{
-            "stars": 5,
-            "comment": "Un restaurant atypique et très agréable"
-         },
-         {
-            "stars": 5,
-            "comment": "Je recommande à tout le monde"
-         }
-      ]
-   },
-   {
-      "restaurantName": "Aactuel",
-      "address": "2 rue parot, 75006 Paris",
-      "lat": 46.227638,
-      "long": 2.213749,
-      "ratings": [{
-            "stars": 5,
-            "comment": "Un restaurant atypique et très agréable"
-         },
-         {
-            "stars": 5,
-            "comment": "Je recommande à tout le monde"
-         }
-      ]
-   }
-]
-
-
-
 
 
 
@@ -215,6 +84,15 @@ function initMap() {
       nom.textContent = resto.restaurantName; // contenu textuel de notre balise
       document.querySelector('.moment').appendChild(nom);
 
+      let getNoteMoyenne = ( rate )=>{
+         let total = 0;
+         rate.forEach(elt=>{
+            total+= elt.stars;
+         });
+         return total/rate.length;
+      } ;
+      let noteMoyenne = getNoteMoyenne(resto.ratings);
+
 
       // GESTION D'AFFICHAGE DES ADRESSES
       let addresse = document.createElement('div'); // div qui stocke les addresses des restaurants
@@ -242,15 +120,41 @@ function initMap() {
       document.querySelector('.moment').appendChild(addresse);
 
       let note = document.createElement('div'); // div qui stocke les addresses des restaurants
-      note.textContent = resto.ratings; 
+      //note.textContent = resto.ratings; 
+      note.innerHTML = resto.ratings.map(elt=>{
+         return ` <div> <p> Note : ${elt.stars} </p>  <p> Comment : ${elt.comment} </p> </div> `
+      });
+      note.innerHTML+=`<p> Note moyenne : ${noteMoyenne} </p>`;
       addresse.appendChild(note);
       document.querySelector('.moment').appendChild(addresse);
 
+
+      // GESTION DES COMMENTAIRES POUR L'ECRITURE
+      let readComment = document.createElement('div'); // creation d'une balise <li> qui va prendre les noms des restaurants
+      readComment.classList.add('writeComment'); // Donner une classe à la balise pour que les styles css bootstrap s'appliquent
+      readComment.textContent = " Ajouter"; // contenu textuel de notre balise
+      addresse.appendChild(readComment);
+      document.querySelector('.moment').appendChild(addresse);
+
+      
+      let writeInput = document.createElement('input');
+      addresse.appendChild(writeInput);
+      document.querySelector('.moment').appendChild(addresse);
+
+      /*let bac = document.getElementById("formulaire");
+      console.log(bac.innerHTML);*/
+
+      
+
    });
-
-
-   // Gestion de la partie collapse pour chaque restaurant
-   let coll = document.getElementsByClassName("list-group-item");
+   
+   /*document.getElementById("formulaire").addEventListener("submit", function(e) {
+         e.preventDefault();
+         alert("Votre avis est envoyé !");
+      })*/
+// FONCTION COLLAPSE AU CLIC SUR UN ÉLÉMENT 
+function Collapse(params) {
+   let coll = document.getElementsByClassName(params);
 
    for (let i = 0; i < coll.length; i++) {
       coll[i].addEventListener("click", function () {
@@ -263,22 +167,11 @@ function initMap() {
          }
       });
    }
+}
 
-
-   // Gestion de la partie collapse pour chaque restaurant
-   let collcom = document.getElementsByClassName("comStyle");
-
-   for (let i = 0; i < collcom.length; i++) {
-      collcom[i].addEventListener("click", function () {
-         //alert("yeeees");
-         this.classList.toggle("active");
-         let comStyle= this.nextElementSibling;
-         if (comStyle.style.display === "block") {
-            comStyle.style.display = "none";
-         } else {
-            comStyle.style.display = "block";
-         }
-      });
-   }
+// Appel de la fonction qui permet l'effet collapse sur les trois éléments voulu
+Collapse("list-group-item");
+Collapse("comStyle");
+Collapse("writeComment");
 
 }

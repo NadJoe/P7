@@ -1,99 +1,108 @@
 
-   [
-      {
-         "restaurantName":"Bronco",
-         "address":"39 Rue des Petites Écuries, 75010 Paris",
-         "lat":48.8737815,
-         "long":2.3501649,
-         "ratings":[
-            {
-               "stars":4,
-               "comment":"Un excellent restaurant, j'y reviendrai ! Par contre il vaut mieux aimer la viande."
-            },
-            {
-               "stars":5,
-               "comment":"Tout simplement mon restaurant préféré !"
-            }
-         ]
+let lesRestos = [{
+   "restaurantName": "Bronco",
+   "address": "39 Rue des Petites Écuries, 75010 Paris",
+   "lat": 48.8737815,
+   "long": 2.3501649,
+   "ratings": [{
+         "stars": 4,
+         "comment": "Un excellent restaurant, j'y reviendrai ! Par contre il vaut mieux aimer la viande."
       },
       {
-         "restaurantName":"Babalou",
-         "address":"4 Rue Lamarck, 75018 Paris",
-         "lat":48.8865035,
-         "long":2.3442197,
-         "ratings":[
-            {
-               "stars":5,
-               "comment":"Une minuscule pizzeria délicieuse cachée juste à côté du Sacré choeur !"
-            },
-            {
-               "stars":3,
-               "comment":"J'ai trouvé ça correct, sans plus"
-            }
-         ]
-      },
-      {
-         "restaurantName":"maxily",
-         "address":"4 Rue maubeuge, 75009 Paris",
-         "lat":48.8865035,
-         "long":2.6742197,
-         "ratings":[
-            {
-               "stars":5,
-               "comment":"Un moment fantastique et inoubliable"
-            },
-            {
-               "stars":3,
-               "comment":"L'equipe est trop sympa et serviable"
-            }
-         ]
-      },
-      {
-         "restaurantName":"Venus Moment",
-         "address":"4 rue vaugirard, 75006 Paris",
-         "lat":48.7865035,
-         "long":2.1442197,
-         "ratings":[
-            {
-               "stars":5,
-               "comment":"Une minuscule pizzeria délicieuse cachée juste à côté du Sacré choeur !"
-            },
-            {
-               "stars":3,
-               "comment":"J'ai trouvé ça correct, sans plus"
-            }
-         ]
-      },
-      {
-         "restaurantName":"Resto Paris",
-         "address":"4 rue vauxaul, 75006 Paris",
-         "lat":48.2865035,
-         "long":2.3442197,
-         "ratings":[
-            {
-               "stars":2,
-               "comment":"Une minuscule pizzeria délicieuse cachée juste à côté du Sacré choeur !"
-            },
-            {
-               "stars":3,
-               "comment":"J'ai trouvé ça correct, sans plus"
-            }
-         ]
-      },
-      {
-         "restaurantName":"African food",
-         "address":"2 rue parot, 75006 Paris",
-         "lat":48.1887035,
-         "long":2.3402197,
-         "ratings":[
-            {
-               "stars":5,
-               "comment":"Un restaurant atypique et très agréable"
-            },
-            {
-               "stars":5,
-               "comment":"Je recommande à tout le monde"
-            }
-         ]
+         "stars": 5,
+         "comment": "Tout simplement mon restaurant préféré !"
       }
    ]
+},
+{
+   "restaurantName": "Babalou",
+   "address": "4 Rue Lamarck, 75018 Paris",
+   "lat": 48.8865035,
+   "long": 2.3442197,
+   "ratings": [{
+         "stars": 5,
+         "comment": "Une minuscule pizzeria délicieuse cachée juste à côté du Sacré choeur !"
+      },
+      {
+         "stars": 3,
+         "comment": "J'ai trouvé ça correct, sans plus"
+      }
+   ]
+},
+{
+   "restaurantName": "maxily",
+   "address": "4 Rue maubeuge, 75009 Paris",
+   "lat": 48.8865035,
+   "long": 2.6742197,
+   "ratings": [{
+         "stars": 5,
+         "comment": "Un moment fantastique et inoubliable"
+      },
+      {
+         "stars": 3,
+         "comment": "L'equipe est trop sympa et serviable"
+      }
+   ]
+},
+{
+   "restaurantName": "Venus Moment",
+   "address": "4 rue vaugirard, 75006 Paris",
+   "lat": 48.7865035,
+   "long": 2.1442197,
+   "ratings": [{
+         "stars": 5,
+         "comment": "Une minuscule pizzeria délicieuse cachée juste à côté du Sacré choeur !"
+      },
+      {
+         "stars": 3,
+         "comment": "J'ai trouvé ça correct, sans plus"
+      }
+   ]
+},
+{
+   "restaurantName": "Resto Paris",
+   "address": "4 rue vauxaul, 75006 Paris",
+   "lat": 48.2865035,
+   "long": 2.3442197,
+   "ratings": [{
+         "stars": 2,
+         "comment": "Une minuscule pizzeria délicieuse cachée juste à côté du Sacré choeur !"
+      },
+      {
+         "stars": 3,
+         "comment": "J'ai trouvé ça correct, sans plus"
+      }
+   ]
+},
+{
+   "restaurantName": "African food",
+   "address": "2 rue parot, 75006 Paris",
+   "lat": 48.1887035,
+   "long": 2.3402197,
+   "ratings": [{
+         "stars": 5,
+         "comment": "Un restaurant atypique et très agréable"
+      },
+      {
+         "stars": 5,
+         "comment": "Je recommande à tout le monde"
+      }
+   ]
+},
+{
+   "restaurantName": "Aactuel",
+   "address": "2 rue parot, 75006 Paris",
+   "lat": 46.227638,
+   "long": 2.213749,
+   "ratings": [{
+         "stars": 5,
+         "comment": "Un restaurant atypique et très agréable"
+      },
+      {
+         "stars": 5,
+         "comment": "Je recommande à tout le monde"
+      }
+   ]
+}
+]
+

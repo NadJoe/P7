@@ -17,15 +17,16 @@ footer {
 }
 
 #selection {
-    width: 30%;
+    width: 25%;
     height: 100%;
     background-color: #346597;
+    text-align: center;
+    font-family: monospace;
 }
 
 p {
     width: 90%;
-    font-family: comic sans ms;
-    font-size: 1.2em;
+    /*font-size: 1.2em;*/
     margin: auto;
 }
 
@@ -48,7 +49,6 @@ h1 {
     margin: auto;
     background-color: #346597;
     font-style: italic;
-    font-family: comic sans ms;
     height: 70px;
     padding-top: 5px;
     color: white;
@@ -56,8 +56,7 @@ h1 {
 
 ul {
     text-align: center;
-    font-size: 1.2em;
-    font-family: comic sans ms;
+    /*font-size: 1.2em;*/
     list-style-type: none;
     letter-spacing: 2px;
     border: 1px solid grey;
@@ -74,16 +73,16 @@ h2 {
 
 .list-group-item {
     text-transform: uppercase;
-
     background-color: #346597;
     color: white;
     cursor: pointer;
     padding: 18px;
-    width: 100%;
     border: none;
     text-align: left;
     outline: none;
-    font-size: 15px;
+    font-size: 1.4em;
+    letter-spacing: 3px;
+    border: 1px solid white;
 }
 
 .content {
@@ -92,13 +91,6 @@ h2 {
     overflow: hidden;
     background-color: #f1f1f1;
 }
-
-/*.content li {
-    padding: 0 18px;
-    display: none;
-    overflow: hidden;
-    background-color: #f1f1f1;
-}*/
 
 .active,
 .list-group-item:hover {
@@ -113,10 +105,9 @@ h2 {
 }
 
 .comStyle{
-    width: 60%;
+    width: 100%;
     margin: auto;
     text-align: center;
-    font-size: 1.1em;
     background-color: #346597;
     color: white;
     text-transform: uppercase;
@@ -126,4 +117,83 @@ h2 {
 .active,
 .comStyle:hover {
     opacity: 0.8;
+}
+
+.writeComment{
+    width: 100%;
+    margin: auto;
+    text-align: center;
+    /*font-size: 1.1em;*/
+    background-color: #346597;
+    color: white;
+    text-transform: uppercase;
+    
+}
+
+input{
+    width: 80%;
+}
+
+#formCommentaire{
+    width: 150px;
+}
+
+
+/*  RESPONSIVE AVEC LES MEDIAS QUERIES  */
+@media (max-width: 900px) {
+    #conteneur {
+        width: 100%;
+        margin: auto;
+        display: flex;
+    }
+
+    #map {
+        width: 65%;
+        height: 100%;
+        margin: auto;
+    }
+
+    #selection {
+        width: 30%;
+        margin: auto;
+        background-color: #346597;
+        text-align: center;
+        font-family: monospace;
+    }
+
+    .list-group-item {
+        text-align: left;
+        letter-spacing: 3px;
+        border: 1px solid white;
+        font-size: 1.1em;
+    }
+}
+
+@media (max-width: 750px) {
+    #conteneur {
+        width: 100%;
+        margin: auto;
+        display: block;
+    }
+
+    #map {
+        width: 90%;
+        height: 100%;
+        margin: auto;
+    }
+
+    #selection {
+        width: 90%;
+        margin: auto;
+        background-color: #346597;
+        text-align: center;
+        font-family: monospace;
+    }
+
+    .list-group-item {
+        text-align: center;
+        letter-spacing: 3px;
+        border: 1px solid white;
+        font-size: 1.3em;
+    }
 }

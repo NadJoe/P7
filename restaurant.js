@@ -6,20 +6,20 @@ class Restaurant {
         this.address = resto.address;
         this.lat = resto.lat;
         this.long = resto.long;
-        this.ratings = resto.ratings;
-        this.averageNote = this.MoyNote;
+        this.ratings = resto.ratings?resto.ratings:[];
+        this.averageNote = resto.averageNote;
         this.marker = null;
 
     }
 
     // Methods Calcul note moyenne
-    getNoteMoyenne(rate){
+   /* getNoteMoyenne(rate){
         let total = 0;
         rate.forEach(elt=>{
            total+= elt.stars;
         });
         return total/rate.length;
-     };
+     };*/
 
      // Initialisation du model de marker
      setMarker(map){
@@ -41,7 +41,7 @@ class Restaurant {
         this.marker = marker;
      }
 
-
+// Set informations
      displayContent(){
 
         let content = `
@@ -57,8 +57,9 @@ class Restaurant {
                             return ` <div> <p> Note : ${elt.stars} </p>  <p> Comment : ${elt.comment} </p> </div> `
                         }) 
                         }
-                        <p> Note moyenne : ${this.getNoteMoyenne(this.ratings)} </p>
+                        
                     </div>
+                    <p> Note moyenne : ${this.averageNote} </p>
                     <div class = "writeComment" > Ajouter un commentaire</div>
                 </div>
             
@@ -66,7 +67,8 @@ class Restaurant {
         document.querySelector('.moment').innerHTML += content;
     }
 
-    //let commentPlace = document.getElementsByClassName("writeComment");
+
+// Add comment
     writeComment(commentPlace){
 
         for (let item of commentPlace) {
@@ -82,7 +84,7 @@ class Restaurant {
                                        params.target.parentNode.appendChild(writeInput);
                                        document.getElementById("formComment").addEventListener("submit", function (e) {
         
-        
+                                        //console.log(params.target);
         
                                           e.preventDefault();
                                           let laNote = document.getElementById("votreNote").value;
@@ -90,13 +92,9 @@ class Restaurant {
                                           
                                           writeInput.parentNode.removeChild(writeInput);
         
-                                          //console.log(document.getElementsByClassName('active')[0].textContent); // Restaurant sur lequel on veut ajouter un commentaire
-        
                                           let nvCom = `,<br> <div> <p> Note : ${laNote} </p>  <p> Comment : ${leCom} </p> </div> <br>`
  
-                                          alert(this.ratings.comment);
-                                          
-                                          //document.querySelector(".nouveau").innerHTML += nvCom;
+                                          params.target.parentNode.querySelector(".nouveau").innerHTML += nvCom;
         
                                        });
         
@@ -106,6 +104,8 @@ class Restaurant {
                
          }
     }
+
+
 }
 
 

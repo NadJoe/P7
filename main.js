@@ -15,10 +15,10 @@ function initMap() {
 
 
    // Try HTML5 geolocation.
-   
+   let pos={};
    if (navigator.geolocation) {
       navigator.geolocation.getCurrentPosition(function (position) {
-         let pos = {
+          pos = {
             lat: position.coords.latitude,
             lng: position.coords.longitude
          };
@@ -42,36 +42,6 @@ function initMap() {
 
          map.setCenter(pos);
 
-         /*let service = new google.maps.places.PlacesService(map);
-         service.nearbySearch({
-            location : pos,
-            radius: 5500,
-            type : ['restaurant']
-         }, callback);
-
-         function callback(results, status){
-            if (status === google.maps.places.PlacesServiceStatus.OK) {
-                for (var i = 0; i < results.length; i++) {
-                    createMarker(results[i]);
-                }
-            }
-        }
-
-
-        function createMarker(place) {
-         var placeLoc = place.geometry.location;
-         var marker = new google.maps.Marker({
-             map : map,
-             position : place.geometry.location
-         });
-
-         google.maps.event.addListener(marker, 'click', function() {
-             infowindow.setContent(place.name);
-             infowindow.open(map, this);
-         });
-     }*/
-
-
       }, function () {
          //handleLocationError(true, infoWindow, map.getCenter());
          alert("ERROR");
@@ -82,11 +52,70 @@ function initMap() {
       handleLocationError(false, infoWindow, map.getCenter());
    }
 
+   // ajouter un marker à n'importe quel endroit lors d'un clic sur la carte
+   map.addListener('click', function(e){
+      
+      let clickPosition = e.latLng;
+      console.log(clickPosition);
+
+  /* // geocoder pour trouver l'addresse du clic sur la carte
+      const geocoder = new google.maps.Geocoder();
+      function getAddressGeocode(geocoder, map){
+         const latLngResto = {
+            lat : latNewResto,
+            lng : longNewResto
+         };
+
+         geocoder.geocode({location: latLngResto}, (results, statut) => {
+            if(statut === "OK"){
+               console.log(results[0].formatted_address);
+               if(results[0]){
+                  //map.setZoom(11);
+               }
+            }
+         });
+      }*/
+
+      //getAddressGeocode(geocoder,map);
+
+      let newResto = {};
+      let latNewResto = clickPosition.lat();
+      let longNewResto = clickPosition.lng();
+      let newRestaurantName = 'nouveau resto';
+      let newAddressRestaurant = "nouvelle adresse";
+
+      newResto.id = 0;
+      newResto.restaurantName = newRestaurantName;
+      newResto.address = newAddressRestaurant;
+      newResto.lat = latNewResto;
+      newResto.long = longNewResto;
+      newResto.averageNote = 2;
+      //console.log('Details du nouveau restaurant');
+      console.log('Latitude : '+ latNewResto + ' ' + 'Longitude : ' + longNewResto);
+
+
+      let monNouveauResto = new Restaurant(newResto.id, newResto);
+      monNouveauResto.setMarker(map);
+      monNouveauResto.displayContent();
+
+      // Ajout de commentaire
+      let yesResto = document.getElementsByClassName("writeComment");
+      monNouveauResto.writeComment(yesResto);
+
+      console.log(newResto);
+
+      Collapse("list-group-item");
+      Collapse("comStyle");
+      Collapse("writeComment");
+   });
+
+   
+
 /*********************************************************************************************************/
 /*********************************************************************************************************/
 
    // Ajout des markers pour chaque restaurant avec la boucle forEach
-   lesRestos.forEach(function (resto, index) {
+  /* lesRestos.forEach(function (resto, index) {
       // Donner a la fonction addMarker les données des restos en paramètres
       let restaurant = new Restaurant(index, resto);
 
@@ -96,12 +125,21 @@ function initMap() {
       let yes = document.getElementsByClassName("writeComment");
       restaurant.writeComment(yes);
 
-   });
+   });*/
 
 
 /*********************************************************************************************************/
 /*********************************************************************************************************/
 
+
+function placeMarkerToMap(latLng, map) {
+   var marker = new google.maps.Marker({
+      position: latLng,
+      map: map
+   })
+   
+   map.panTo(latLng);
+}
 
 /*********************************************************************************************************/
 /*********************************************************************************************************/
@@ -123,9 +161,37 @@ function Collapse(params) {
    }
 }
 
-// Appel de la fonction qui permet l'effet collapse sur les trois éléments voulu
-Collapse("list-group-item");
-Collapse("comStyle");
-Collapse("writeComment");
+   const url = "https://maps.googleapis.com/maps/api/place/nearbysearch/json?location="+pos.lat+","+pos.lng+"&radius=1500&type=restaurant&keyword=cruise&key=AIzaSyC06sSZBdXw9TReabbXsFZ5e6ItlYbCZSA";
+   fetch(url ,{mode: 'cors'})
+   .then(response=>response.json())
+   .then(result=>{
+      console.log(result.results);
+
+      result.results.forEach(restaurant => {
+         let resto = {};
+         resto.id = restaurant.place_id;
+         resto.restaurantName = restaurant.name;
+         resto.address = restaurant.vicinity;
+         resto.lat = restaurant.geometry.location.lat;
+         resto.long = restaurant.geometry.location.lng;
+         resto.averageNote = restaurant.rating;
+         console.log(restaurant.name);
+
+         let restoObject = new Restaurant(resto.id, resto);
+
+         restoObject.setMarker(map);
+         restoObject.displayContent();
+
+         let yes = document.getElementsByClassName("writeComment");
+         restoObject.writeComment(yes);
+
+         
+      })
+
+      // Appel de la fonction qui permet l'effet collapse sur les trois éléments voulu
+      Collapse("list-group-item");
+      Collapse("comStyle");
+      Collapse("writeComment");
+   })
 
 }

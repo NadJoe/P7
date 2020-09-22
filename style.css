@@ -19,9 +19,10 @@ footer {
 #selection {
     width: 25%;
     height: 100%;
-    background-color: #346597;
     text-align: center;
+    color:#346597;
     font-family: monospace;
+    border: 1px solid #346597;
 }
 
 p {
@@ -74,7 +75,6 @@ h2 {
 .list-group-item {
     text-transform: uppercase;
     background-color: #346597;
-    color: white;
     cursor: pointer;
     padding: 18px;
     border: none;
@@ -156,9 +156,9 @@ input{
     #selection {
         width: 30%;
         margin: auto;
-        background-color: #346597;
-        text-align: center;
+        color:#346597;
         font-family: monospace;
+        border: 1px solid #346597;
     }
 
     .list-group-item {
@@ -185,9 +185,9 @@ input{
     #selection {
         width: 90%;
         margin: auto;
-        background-color: #346597;
-        text-align: center;
+        color:#346597;
         font-family: monospace;
+        border: 1px solid #346597;
     }
 
     .list-group-item {

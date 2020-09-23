@@ -13,13 +13,13 @@ class Restaurant {
     }
 
     // Methods Calcul note moyenne
-   /* getNoteMoyenne(rate){
+   getNoteMoyenne(rate){
         let total = 0;
         rate.forEach(elt=>{
            total+= elt.stars;
         });
         return total/rate.length;
-     };*/
+     };
 
      // Initialisation du model de marker
      setMarker(map){

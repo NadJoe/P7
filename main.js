@@ -5,6 +5,7 @@
 let map, infoWindow;
 
 function initMap() {
+   let geocoder = new google.maps.Geocoder();
    map = new google.maps.Map(document.getElementById('map'), {
       center: {
          lat: 48.847982,
@@ -13,6 +14,62 @@ function initMap() {
       zoom: 13
    });
 
+   // ajouter un marker à n'importe quel endroit lors d'un clic sur la carte
+   map.addListener('click', function(e){
+      let newResto = {};
+      $('#blocFormNewRestaurant').modal('show'); 
+      let clickPosition = e.latLng;
+      //console.log(clickPosition);
+
+      geocoder.geocode( { location : clickPosition }, function(results, status) {
+        if (status == 'OK') {
+          //map.setCenter(results[0].geometry.location);
+          //alert('OK');
+          //console.log(results[0].formatted_address);
+          newResto.address = results[0].formatted_address;
+        } else {
+          alert('Geocode was not successful for the following reason: ' + status);
+        }
+      });
+    
+
+      $("#formNewRestaurant").submit(function (nad) {
+         
+         $('#blocFormNewRestaurant').modal('hide'); // fermer le formulaire dès qu'il est envoyé
+         // console.log('le formulaire est envoyé');
+         nad.preventDefault();
+         
+         let latNewResto = clickPosition.lat();
+         let longNewResto = clickPosition.lng();
+         let newRestaurantName = document.getElementById("nom").value;
+         //let newAddressRestaurant = results[0].formatted_address;
+
+         console.log(newRestaurantName);
+
+         newResto.id = 0;
+         newResto.restaurantName = newRestaurantName;
+         //newResto.address = newAddressRestaurant;
+         newResto.lat = latNewResto;
+         newResto.long = longNewResto;
+         newResto.averageNote = 2;
+
+         let monNouveauResto = new Restaurant(newResto.id, newResto);
+         monNouveauResto.setMarker(map);
+         monNouveauResto.displayContent();
+
+          // Ajout de commentaire
+         let yesResto = document.getElementsByClassName("writeComment");
+         monNouveauResto.writeComment(yesResto);
+
+         console.log(newResto);
+
+         Collapse("list-group-item");
+         Collapse("comStyle");
+         Collapse("writeComment");
+
+      });
+
+   });
 
    // Try HTML5 geolocation.
    let pos={};
@@ -51,65 +108,6 @@ function initMap() {
       // Browser doesn't support Geolocation
       handleLocationError(false, infoWindow, map.getCenter());
    }
-
-   // ajouter un marker à n'importe quel endroit lors d'un clic sur la carte
-   map.addListener('click', function(e){
-      
-      let clickPosition = e.latLng;
-      console.log(clickPosition);
-
-  /* // geocoder pour trouver l'addresse du clic sur la carte
-      const geocoder = new google.maps.Geocoder();
-      function getAddressGeocode(geocoder, map){
-         const latLngResto = {
-            lat : latNewResto,
-            lng : longNewResto
-         };
-
-         geocoder.geocode({location: latLngResto}, (results, statut) => {
-            if(statut === "OK"){
-               console.log(results[0].formatted_address);
-               if(results[0]){
-                  //map.setZoom(11);
-               }
-            }
-         });
-      }*/
-
-      //getAddressGeocode(geocoder,map);
-
-      let newResto = {};
-      let latNewResto = clickPosition.lat();
-      let longNewResto = clickPosition.lng();
-      let newRestaurantName = 'nouveau resto';
-      let newAddressRestaurant = "nouvelle adresse";
-
-      newResto.id = 0;
-      newResto.restaurantName = newRestaurantName;
-      newResto.address = newAddressRestaurant;
-      newResto.lat = latNewResto;
-      newResto.long = longNewResto;
-      newResto.averageNote = 2;
-      //console.log('Details du nouveau restaurant');
-      console.log('Latitude : '+ latNewResto + ' ' + 'Longitude : ' + longNewResto);
-
-
-      let monNouveauResto = new Restaurant(newResto.id, newResto);
-      monNouveauResto.setMarker(map);
-      monNouveauResto.displayContent();
-
-      // Ajout de commentaire
-      let yesResto = document.getElementsByClassName("writeComment");
-      monNouveauResto.writeComment(yesResto);
-
-      console.log(newResto);
-
-      Collapse("list-group-item");
-      Collapse("comStyle");
-      Collapse("writeComment");
-   });
-
-   
 
 /*********************************************************************************************************/
 /*********************************************************************************************************/
@@ -161,7 +159,7 @@ function Collapse(params) {
    }
 }
 
-   const url = "https://maps.googleapis.com/maps/api/place/nearbysearch/json?location="+pos.lat+","+pos.lng+"&radius=1500&type=restaurant&keyword=cruise&key=AIzaSyC06sSZBdXw9TReabbXsFZ5e6ItlYbCZSA";
+   const url = "https://maps.googleapis.com/maps/api/place/nearbysearch/json?location=48.85,2.5667&radius=1500&type=restaurant&keyword=cruise&key=AIzaSyC06sSZBdXw9TReabbXsFZ5e6ItlYbCZSA";
    fetch(url ,{mode: 'cors'})
    .then(response=>response.json())
    .then(result=>{
@@ -193,5 +191,9 @@ function Collapse(params) {
       Collapse("comStyle");
       Collapse("writeComment");
    })
+
+
+
+  
 
 }

@@ -3,6 +3,7 @@ class Restaurant {
     constructor(id, resto) {
         this.id = `restaurant_${id}`;
         this.restaurantName = resto.restaurantName;
+        this.streetImage = resto.streetImage;
         this.address = resto.address;
         this.lat = resto.lat;
         this.long = resto.long;
@@ -45,11 +46,14 @@ class Restaurant {
      displayContent(){
 
         let content = `
-                <div class="list-group-item">${this.restaurantName} </div>
+                <div class="list-group-item"> ${this.restaurantName} </div>
                 <div class="content">
+                    <div class="imageResto">
+                        <img src="${this.streetImage}" >
+                    </div>
                     <div>${this.address}</div>
-                    <div>${this.lat} </div>
-                    <div> ${this.long}</div>
+                    <div>${this.lat}</div>
+                    <div>${this.long}</div>
                     <div class="comStyle"> Les commentaires </div>
                     <div class="nouveau">
                         ${
@@ -66,7 +70,6 @@ class Restaurant {
             `
         document.querySelector('.moment').innerHTML += content;
     }
-
 
 // Add comment
     writeComment(commentPlace){

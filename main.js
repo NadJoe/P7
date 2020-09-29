@@ -5,6 +5,7 @@
 let map, infoWindow;
 
 function initMap() {
+
    let geocoder = new google.maps.Geocoder();
    map = new google.maps.Map(document.getElementById('map'), {
       center: {
@@ -14,19 +15,58 @@ function initMap() {
       zoom: 13
    });
 
+
+    // Try HTML5 geolocation.
+    let pos={};
+    if (navigator.geolocation){
+       navigator.geolocation.getCurrentPosition(function (position) {
+           pos = {
+             lat: position.coords.latitude,
+             lng: position.coords.longitude
+          };
+ 
+          // Information que contiendra l'infobulle sur le marker
+          let infos = new google.maps.InfoWindow({
+             content: '<h2>Position Actuelle</h2>',
+          });
+ 
+          let marker = new google.maps.Marker({
+             position: pos,
+             map: map,
+             icon: 'https://developers.google.com/maps/documentation/javascript/examples/full/images/beachflag.png'
+          });
+ 
+          // Quand l'utilisateur clique sur le marker, l'info apparait.
+          marker.addListener('click', function () {
+             infos.open(map, marker);
+          })
+ 
+ 
+          map.setCenter(pos);
+ 
+       }, function () {
+          //handleLocationError(true, infoWindow, map.getCenter());
+          alert("ERROR");
+       },{timeout:10000});
+       
+    } else {
+       // Browser doesn't support Geolocation
+       handleLocationError(false, infoWindow, map.getCenter());
+    }
+   
+
    // ajouter un marker à n'importe quel endroit lors d'un clic sur la carte
-   map.addListener('click', function(e){
-      let newResto = {};
-      $('#blocFormNewRestaurant').modal('show'); 
-      let clickPosition = e.latLng;
-      //console.log(clickPosition);
+      map.addListener('click', function(e){
+         let newResto = {};
+         $('#blocFormNewRestaurant').modal('show'); 
+         let clickPosition = e.latLng;
 
       geocoder.geocode( { location : clickPosition }, function(results, status) {
         if (status == 'OK') {
           //map.setCenter(results[0].geometry.location);
           //alert('OK');
           //console.log(results[0].formatted_address);
-          newResto.address = results[0].formatted_address;
+          newResto.address = results[0].formatted_address; // recuperation de l'addresse du clic sur la map
         } else {
           alert('Geocode was not successful for the following reason: ' + status);
         }
@@ -48,7 +88,6 @@ function initMap() {
 
          newResto.id = 0;
          newResto.restaurantName = newRestaurantName;
-         //newResto.address = newAddressRestaurant;
          newResto.lat = latNewResto;
          newResto.long = longNewResto;
          newResto.averageNote = 2;
@@ -71,94 +110,31 @@ function initMap() {
 
    });
 
-   // Try HTML5 geolocation.
-   let pos={};
-   if (navigator.geolocation) {
-      navigator.geolocation.getCurrentPosition(function (position) {
-          pos = {
-            lat: position.coords.latitude,
-            lng: position.coords.longitude
-         };
-
-         // Information que contiendra l'infobulle sur le marker
-         let infos = new google.maps.InfoWindow({
-            content: '<h2>Position Actuelle</h2>',
-         });
-
-         let marker = new google.maps.Marker({
-            position: pos,
-            map: map,
-            icon: 'https://developers.google.com/maps/documentation/javascript/examples/full/images/beachflag.png'
-         });
-
-         // Quand l'utilisateur clique sur le marker, l'info apparait.
-         marker.addListener('click', function () {
-            infos.open(map, marker);
-         })
-
-
-         map.setCenter(pos);
-
-      }, function () {
-         //handleLocationError(true, infoWindow, map.getCenter());
-         alert("ERROR");
-      },{timeout:10000});
-      
-   } else {
-      // Browser doesn't support Geolocation
-      handleLocationError(false, infoWindow, map.getCenter());
-   }
-
-/*********************************************************************************************************/
-/*********************************************************************************************************/
-
-   // Ajout des markers pour chaque restaurant avec la boucle forEach
-  /* lesRestos.forEach(function (resto, index) {
-      // Donner a la fonction addMarker les données des restos en paramètres
-      let restaurant = new Restaurant(index, resto);
-
-      restaurant.setMarker(map);
-      restaurant.displayContent();
-
-      let yes = document.getElementsByClassName("writeComment");
-      restaurant.writeComment(yes);
-
-   });*/
-
-
-/*********************************************************************************************************/
-/*********************************************************************************************************/
-
-
-function placeMarkerToMap(latLng, map) {
-   var marker = new google.maps.Marker({
-      position: latLng,
-      map: map
-   })
-   
-   map.panTo(latLng);
-}
-
 /*********************************************************************************************************/
 /*********************************************************************************************************/
 
 // FONCTION COLLAPSE AU CLIC SUR UN ÉLÉMENT 
-function Collapse(params) {
-   let coll = document.getElementsByClassName(params);
+   function Collapse(params) {
+      let coll = document.getElementsByClassName(params);
 
-   for (let i = 0; i < coll.length; i++) {
-      coll[i].addEventListener("click", function () {
-         this.classList.toggle("active");
-         let content = this.nextElementSibling;
-         if (content.style.display === "block") {
-            content.style.display = "none";
-         } else {
-            content.style.display = "block";
-         }
-      });
+      for (let i = 0; i < coll.length; i++) {
+         coll[i].addEventListener("click", function () {
+            this.classList.toggle("active");
+            let content = this.nextElementSibling;
+            if (content.style.display === "block") {
+               content.style.display = "none";
+            } else {
+               content.style.display = "block";
+            }
+         });
+      }
    }
-}
 
+/*********************************************************************************************************/
+/*********************************************************************************************************/
+
+   var restaurantLocation = "location="+pos.lat+","+pos.lng;
+   console.log(pos);
    const url = "https://maps.googleapis.com/maps/api/place/nearbysearch/json?location=48.85,2.5667&radius=1500&type=restaurant&keyword=cruise&key=AIzaSyC06sSZBdXw9TReabbXsFZ5e6ItlYbCZSA";
    fetch(url ,{mode: 'cors'})
    .then(response=>response.json())
@@ -177,14 +153,22 @@ function Collapse(params) {
 
          let restoObject = new Restaurant(resto.id, resto);
 
+         var restoLocation = "location="+resto.lat+","+resto.long;
+         let image = 'https://maps.googleapis.com/maps/api/streetview?'+restoLocation+'&size=300x300&key=AIzaSyC06sSZBdXw9TReabbXsFZ5e6ItlYbCZSA';
+
+         restoObject.streetImage = image;
+         
          restoObject.setMarker(map);
          restoObject.displayContent();
 
+         console.log(pos);
+
          let yes = document.getElementsByClassName("writeComment");
          restoObject.writeComment(yes);
-
          
       })
+
+
 
       // Appel de la fonction qui permet l'effet collapse sur les trois éléments voulu
       Collapse("list-group-item");

@@ -5,8 +5,9 @@
 let map, infoWindow;
 
 function initMap() {
+   let pos={};
 
-   let geocoder = new google.maps.Geocoder();
+   
    map = new google.maps.Map(document.getElementById('map'), {
       center: {
          lat: 48.847982,
@@ -17,16 +18,18 @@ function initMap() {
 
 
     // Try HTML5 geolocation.
-    let pos={};
+    
     if (navigator.geolocation){
        navigator.geolocation.getCurrentPosition(function (position) {
            pos = {
              lat: position.coords.latitude,
              lng: position.coords.longitude
           };
+
+      // Dès que j'ai la geolocalisation, je fetch pour rechercher les restaurants de cette zone
+          getFetch(pos.lat, pos.lng); //////////////////////////////////////////////////////////
  
-          // Information que contiendra l'infobulle sur le marker
-          let infos = new google.maps.InfoWindow({
+          let infos = new google.maps.InfoWindow({ // Information que contiendra l'infobulle sur le marker
              content: '<h2>Position Actuelle</h2>',
           });
  
@@ -36,16 +39,14 @@ function initMap() {
              icon: 'https://developers.google.com/maps/documentation/javascript/examples/full/images/beachflag.png'
           });
  
-          // Quand l'utilisateur clique sur le marker, l'info apparait.
-          marker.addListener('click', function () {
+          marker.addListener('click', function () { // Quand l'utilisateur clique sur le marker, l'info apparait.
              infos.open(map, marker);
           })
- 
  
           map.setCenter(pos);
  
        }, function () {
-          //handleLocationError(true, infoWindow, map.getCenter());
+          handleLocationError(true, infoWindow, map.getCenter());
           alert("ERROR");
        },{timeout:10000});
        
@@ -53,10 +54,14 @@ function initMap() {
        // Browser doesn't support Geolocation
        handleLocationError(false, infoWindow, map.getCenter());
     }
+
    
+/*********************************************************************************************************/
+/*********************************************************************************************************/
 
    // ajouter un marker à n'importe quel endroit lors d'un clic sur la carte
       map.addListener('click', function(e){
+         let geocoder = new google.maps.Geocoder();
          let newResto = {};
          $('#blocFormNewRestaurant').modal('show'); 
          let clickPosition = e.latLng;
@@ -73,10 +78,9 @@ function initMap() {
       });
     
 
-      $("#formNewRestaurant").submit(function (nad) {
+      $("#formNewRestaurant").submit(function(nad){
          
          $('#blocFormNewRestaurant').modal('hide'); // fermer le formulaire dès qu'il est envoyé
-         // console.log('le formulaire est envoyé');
          nad.preventDefault();
          
          let latNewResto = clickPosition.lat();
@@ -93,14 +97,18 @@ function initMap() {
          newResto.averageNote = 2;
 
          let monNouveauResto = new Restaurant(newResto.id, newResto);
+
+         let imageNewResto = "location="+newResto.lat+","+newResto.long;
+         let imageDuResto = 'https://maps.googleapis.com/maps/api/streetview?'+imageNewResto+'&size=300x300&key=AIzaSyC06sSZBdXw9TReabbXsFZ5e6ItlYbCZSA';
+
+         monNouveauResto.streetImage = imageDuResto;
+
          monNouveauResto.setMarker(map);
          monNouveauResto.displayContent();
 
           // Ajout de commentaire
          let yesResto = document.getElementsByClassName("writeComment");
          monNouveauResto.writeComment(yesResto);
-
-         console.log(newResto);
 
          Collapse("list-group-item");
          Collapse("comStyle");
@@ -133,51 +141,66 @@ function initMap() {
 /*********************************************************************************************************/
 /*********************************************************************************************************/
 
-   var restaurantLocation = "location="+pos.lat+","+pos.lng;
-   console.log(pos);
-   const url = "https://maps.googleapis.com/maps/api/place/nearbysearch/json?location=48.85,2.5667&radius=1500&type=restaurant&keyword=cruise&key=AIzaSyC06sSZBdXw9TReabbXsFZ5e6ItlYbCZSA";
-   fetch(url ,{mode: 'cors'})
-   .then(response=>response.json())
-   .then(result=>{
-      console.log(result.results);
+      let cleApi = 'AIzaSyC06sSZBdXw9TReabbXsFZ5e6ItlYbCZSA';
 
-      result.results.forEach(restaurant => {
-         let resto = {};
-         resto.id = restaurant.place_id;
-         resto.restaurantName = restaurant.name;
-         resto.address = restaurant.vicinity;
-         resto.lat = restaurant.geometry.location.lat;
-         resto.long = restaurant.geometry.location.lng;
-         resto.averageNote = restaurant.rating;
-         console.log(restaurant.name);
-
-         let restoObject = new Restaurant(resto.id, resto);
-
-         var restoLocation = "location="+resto.lat+","+resto.long;
-         let image = 'https://maps.googleapis.com/maps/api/streetview?'+restoLocation+'&size=300x300&key=AIzaSyC06sSZBdXw9TReabbXsFZ5e6ItlYbCZSA';
-
-         restoObject.streetImage = image;
+         function getFetch(lat, long) {
          
-         restoObject.setMarker(map);
-         restoObject.displayContent();
+               var restaurantLocation = "location="+lat+","+long;
+               console.log(restaurantLocation);
+               const url = "https://maps.googleapis.com/maps/api/place/nearbysearch/json?"+restaurantLocation+"&radius=1500&type=restaurant&keyword=cruise&key=AIzaSyC06sSZBdXw9TReabbXsFZ5e6ItlYbCZSA";
+               fetch(url ,{mode: 'cors'})
+               .then(response=>response.json())
+               .then(result=>{
+                  console.log(result.results);
 
-         console.log(pos);
+                  result.results.forEach(restaurant => {
+                     let resto = {};
+                     resto.id = restaurant.place_id;
+                     resto.restaurantName = restaurant.name;
+                     resto.address = restaurant.vicinity;
+                     resto.lat = restaurant.geometry.location.lat;
+                     resto.long = restaurant.geometry.location.lng;
+                     resto.averageNote = restaurant.rating;
+                     console.log(restaurant.name);
 
-         let yes = document.getElementsByClassName("writeComment");
-         restoObject.writeComment(yes);
-         
-      })
+                     let restoObject = new Restaurant(resto.id, resto);
+
+                     var restoLocation = "location="+resto.lat+","+resto.long;
+                     let image = 'https://maps.googleapis.com/maps/api/streetview?'+restoLocation+'&size=300x300&key='+cleApi+'';
+
+                     restoObject.streetImage = image;
+
+
+                     let request = { 
+                        placeId: "ChIJL4UVCSdu5kcRZP_k3fkFhoY"
+                     };
+                     let service = new google.maps.places.PlacesService(map);
+                     service.getDetails(request, function(place, status) {
+                        if(status == google.maps.places.PlacesServiceStatus.OK){
+                           console.log(place.reviews);
+                        }
+                     });
+
+
+                     
+                     restoObject.setMarker(map);
+                     restoObject.displayContent();
+
+                     //console.log(pos.lat);
+
+                     let yes = document.getElementsByClassName("writeComment");
+                     restoObject.writeComment(yes);
+                     
+                  })
 
 
 
-      // Appel de la fonction qui permet l'effet collapse sur les trois éléments voulu
-      Collapse("list-group-item");
-      Collapse("comStyle");
-      Collapse("writeComment");
-   })
+                  // Appel de la fonction qui permet l'effet collapse sur les trois éléments voulu
+                  Collapse("list-group-item");
+                  Collapse("comStyle");
+                  Collapse("writeComment");
+               })
+         }
 
-
-
-  
 
 }

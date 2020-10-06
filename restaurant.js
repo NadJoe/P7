@@ -41,6 +41,7 @@ class Restaurant {
 
         this.marker = marker;
      }
+     
 
 // Set informations
      displayContent(){
@@ -48,7 +49,7 @@ class Restaurant {
         let content = `
                 <div class="list-group-item"> ${this.restaurantName} </div>
                 <div class="content">
-                    <div class="imageResto">
+                    <div>
                         <img src="${this.streetImage}" >
                     </div>
                     <div>${this.address}</div>

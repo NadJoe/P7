@@ -9,7 +9,7 @@ class Restaurant {
         this.long = resto.long;
         this.ratings = resto.ratings?resto.ratings:[];
         this.averageNote = resto.averageNote;
-        this.marker = null;
+        this.markers = [];
 
     }
 
@@ -38,8 +38,7 @@ class Restaurant {
         marker.addListener('click', function () {
             infosMarker.open(map, marker);
         })
-
-        this.marker = marker;
+        
      }
      
 

@@ -9,7 +9,8 @@ class Restaurant {
         this.long = resto.long;
         this.ratings = resto.ratings?resto.ratings:[];
         this.averageNote = resto.averageNote;
-        this.markers = [];
+        this.marker = null;
+        this.comment = null;
 
     }
 
@@ -38,7 +39,7 @@ class Restaurant {
         marker.addListener('click', function () {
             infosMarker.open(map, marker);
         })
-        
+        this.marker = marker;
      }
      
 
@@ -56,11 +57,6 @@ class Restaurant {
                     <div>${this.long}</div>
                     <div class="comStyle"> Les commentaires </div>
                     <div class="nouveau">
-                        ${
-                            this.ratings.map(elt=>{
-                            return ` <div> <p> Note : ${elt.stars} </p>  <p> Comment : ${elt.comment} </p> </div> `
-                        }) 
-                        }
                         
                     </div>
                     <p> Note moyenne : ${this.averageNote} </p>

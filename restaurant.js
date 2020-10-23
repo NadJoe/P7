@@ -10,7 +10,7 @@ class Restaurant {
         this.ratings = resto.ratings?resto.ratings:[];
         this.averageNote = resto.averageNote;
         this.marker = null;
-        this.comment = null;
+        this.comment = resto.comment;
 
     }
 
@@ -57,7 +57,7 @@ class Restaurant {
                     <div>${this.long}</div>
                     <div class="comStyle"> Les commentaires </div>
                     <div class="nouveau">
-                        
+                        ${this.comment}
                     </div>
                     <p> Note moyenne : ${this.averageNote} </p>
                     <div class = "writeComment" > Ajouter un commentaire</div>

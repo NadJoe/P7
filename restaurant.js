@@ -7,7 +7,6 @@ class Restaurant {
         this.address = resto.address;
         this.lat = resto.lat;
         this.long = resto.long;
-        this.ratings = resto.ratings?resto.ratings:[];
         this.averageNote = resto.averageNote;
         this.marker = null;
         this.comment = resto.comment;
@@ -45,7 +44,7 @@ class Restaurant {
      
 
 // Set informations
-     displayContent(com, com2, com3){
+     displayContent(com, com2){
 
         let content = `
                 <div class="list-group-item"> ${this.restaurantName} </div>
@@ -59,14 +58,11 @@ class Restaurant {
                     <div class="comStyle"> Les commentaires </div>
                     <div class="nouveau">
                     <ul>
-                         <li>
-                         <strong>${com.auteur}</strong> : ${com.com} 
+                        <li>
+                         <span>${com.auteur}</span> : ${com.com} 
                         </li>
                         <li>
-                         <strong>${com2.auteur}</strong> : ${com2.com} 
-                        </li>
-                        <li>
-                         <strong>${com3.auteur}</strong> : ${com3.com} 
+                         <span>${com2.auteur}</span> : ${com2.com} 
                         </li>
                     </ul>
                     </div>
@@ -76,6 +72,30 @@ class Restaurant {
             
             `
         document.querySelector('.moment').innerHTML += content;
+    }
+
+    displayNewResto(){
+
+        let content = `
+                <div class="list-group-item"> ${this.restaurantName} </div>
+                <div class="content">
+                    <div>
+                        <img src="${this.streetImage}" >
+                    </div>
+                    <div>${this.address}</div>
+                    <div>${this.lat}</div>
+                    <div>${this.long}</div>
+                    <div class="comStyle"> Les commentaires </div>
+                    <div class="nouveau">
+                        ${this.comment}
+                    </div>
+                    <p> Note moyenne : ${this.averageNote} </p>
+                    <div class = "writeComment" > Ajouter un commentaire</div>
+                </div>
+            
+            `
+        document.querySelector('.moment').innerHTML += content;
+
     }
 
 // Add comment

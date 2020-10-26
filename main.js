@@ -1,10 +1,8 @@
-let map, infoWindow, geocoder, service;
-//let markers = new Array();
+let map, infoWindow, geocoder;
 let resto = new Array();
 let restaurants = new Array();
-let myComment = new Array();
-let monComEntier;
-let myCommentList = new Array();
+let resultat;
+let userChoice;
 
 function initMap() {
   let pos = {};
@@ -50,10 +48,10 @@ function initMap() {
 
         // Lorsque nous changeons la vue de la map et donc le centre, je recherche les restaurant autour du centre
         google.maps.event.addListener(map, "idle", function () {
-          //console.log(resto);
           restaurants.forEach((elt) => {
             elt.marker.setMap(null);
           });
+          resto = [];
           document.querySelector(".moment").innerHTML = "";
 
           let newLat = map.getCenter().lat();
@@ -87,9 +85,9 @@ function initMap() {
       }
     });
 
-    $("#formNewRestaurant").submit(function (nad) {
+    $("#formNewRestaurant").submit(function (e) {
       $("#blocFormNewRestaurant").modal("hide"); // fermer le formulaire dès qu'il est envoyé
-      nad.preventDefault();
+      e.preventDefault();
 
       let latNewResto = clickPosition.lat();
       let longNewResto = clickPosition.lng();
@@ -102,6 +100,8 @@ function initMap() {
       newResto.lat = latNewResto;
       newResto.long = longNewResto;
       newResto.averageNote = document.getElementById("note").value;
+      let auteurNom = document.getElementById("authorName").value;
+
 
       let monNouveauResto = new Restaurant(newResto.id, newResto);
 
@@ -115,7 +115,7 @@ function initMap() {
 
       restaurants.push(monNouveauResto);
       monNouveauResto.setMarker(map);
-      monNouveauResto.displayContent();
+      monNouveauResto.displayNewResto();
 
       // Ajout de commentaire
       let yesResto = document.getElementsByClassName("writeComment");
@@ -141,79 +141,195 @@ function getFetch(lat, long) {
   fetch(url, { mode: "cors" })
     .then((response) => response.json())
     .then((result) => {
-      //console.log(result.results);
 
-      result.results.forEach((restaurant) => {
-        var restoLocation = "location=" + resto.lat + "," + resto.long;
-        let image =
-          "https://maps.googleapis.com/maps/api/streetview?" +
-          restoLocation +
-          "&size=300x300&key=" +
-          cleApi +
-          "";
-        const nouvelUrl =
-          "https://maps.googleapis.com/maps/api/place/details/json?place_id=" +
-          restaurant.place_id +
-          "&fields=name,rating,formatted_phone_number,reviews&key=AIzaSyC06sSZBdXw9TReabbXsFZ5e6ItlYbCZSA";
+/******************************************************************************************************/
+//  Récupération de l'event de la liste pour le choix des restaurants à afficher
+      let FilterChoice = document.getElementById("inputGroupSelect01");
+
+//  Initialisation par défault du résultat du filtre pour afficher tous les restaurants au chargement de la page
+      resultat = resultat = result.results.filter(
+        (nouvel) => nouvel.rating >= 1 && nouvel.rating < 5
+      );
+      setChange(resultat);
+/******************************************************************************************************/
 
 
+
+    //////////////////////////////////// GESTION D'OUTIL DE FILTRAGE///////////////////////////////////
+    FilterChoice.addEventListener("change", (e) => {
+      // Récupération de la valeur de la liste à tester
+         userChoice = Number(e.target.value);
+
+        //resultat = result.results;
+
+        if (userChoice === 0) {
+          // Reset de la map
+          restaurants.forEach((elt) => {
+            elt.marker.setMap(null);
+          });
+          document.querySelector(".moment").innerHTML = "";
+
+          resultat = result.results.filter(
+            (nouvel) => nouvel.rating >= 1 && nouvel.rating <= 5
+          );
+          setChange(resultat);
+          console.log(userChoice);
+          for (const el of resultat) {
+            console.log(el.name);
+          }
+        } else if (userChoice === 1) {
+          // Reset de la map
+          restaurants.forEach((elt) => {
+            elt.marker.setMap(null);
+          });
+          document.querySelector(".moment").innerHTML = "";
+
+          resultat = result.results.filter(
+            (nouvel) => nouvel.rating >= 0 && nouvel.rating <= 1
+          );
+          setChange(resultat);
+
+        } else if (userChoice === 2) {
+          // Reset de la map
+          restaurants.forEach((elt) => {
+            elt.marker.setMap(null);
+          });
+          document.querySelector(".moment").innerHTML = "";
+
+          resultat = result.results.filter(
+            (nouvel) => nouvel.rating >= 1 && nouvel.rating <= 2
+          );
+          setChange(resultat);
+
+        } else if (userChoice === 3) {
+          // Reset de la map
+          restaurants.forEach((elt) => {
+            elt.marker.setMap(null);
+          });
+          document.querySelector(".moment").innerHTML = "";
+
+          resultat = result.results.filter(
+            (nouvel) => nouvel.rating >= 2 && nouvel.rating <= 3
+          );
+          setChange(resultat);
+
+        } else if (userChoice === 4) {
+
+            // Reset de la map
+              restaurants.forEach((elt) => {
+                elt.marker.setMap(null);
+              });
+              document.querySelector(".moment").innerHTML = "";
+
+              resultat = result.results.filter(
+                (nouvel) => nouvel.rating >= 3 && nouvel.rating <= 4
+              );
+              setChange(resultat);
+ 
+        } else if (userChoice === 5) {
+          // Reset de la map
+          restaurants.forEach((elt) => {
+            elt.marker.setMap(null);
+          });
+          document.querySelector(".moment").innerHTML = "";
+
+          resultat = result.results.filter(
+            (nouvel) => nouvel.rating >= 4 && nouvel.rating <= 5
+          );
+          setChange(resultat);
+
+        } else {
+          resultat = result.results;
+          console.log(resultat);
+        }
+      });
+
+
+
+      
+        switch (userChoice) {
+          case 0:
+            console.log('0');
+            break;
+          case 1:
+            console.log('1');
+            break;
+          case 2:
+            console.log('2');
+            break;
+          case 3:
+            console.log('3');
+            break;
+          case 4:
+            console.log('4');
+            break;
+          case 5:
+            console.log('5');
+            break;
+          default:
+        }
+
+
+      function setChange(myResult) {
+        myResult.forEach((restaurant) => {
+          var restoLocation = "location=" + resto.lat + "," + resto.long;
+          let image =
+            "https://maps.googleapis.com/maps/api/streetview?" +
+            restoLocation +
+            "&size=300x300&key=" +
+            cleApi +
+            "";
+          const nouvelUrl =
+            "https://maps.googleapis.com/maps/api/place/details/json?place_id=" +
+            restaurant.place_id +
+            "&fields=name,rating,formatted_phone_number,reviews&key=AIzaSyC06sSZBdXw9TReabbXsFZ5e6ItlYbCZSA";
 
           fetch(nouvelUrl)
-          .then((response) => response.json())
-          .then(function (response) {
-           let monTest = response.result.reviews;
-            for (const iterator of monTest) {
-              //console.log(iterator.text);
-               let monCom = iterator.text;
-               let monComNom = iterator.author_name;
+            .then((response) => response.json())
+            .then(function (response) {
+              let monTest = response.result.reviews;
+              for (const iterator of monTest) {
+                // console.log(iterator.text);
+                let monCom = iterator.text;
+                let monComNom = iterator.author_name;
+
+                myFirstCom = { com: monCom, auteur: monComNom };
+
+                //myCommentList.push(monComEntier);
+              }
+
+              let monCom = response.result.reviews[0].text;
+              let monComNom = response.result.reviews[0].author_name;
+              mySecondCom = { com: monCom, auteur: monComNom };
+
               
-               myFirstCom = { com: monCom, auteur: monComNom };
-              //myCommentList.push(monComEntier);
+              resto.push(monResto);
+              let restoObject = new Restaurant(restaurant.place_id, monResto);
+              restoObject.streetImage = image;
+              restoObject.setMarker(map);
+              restoObject.displayContent(myFirstCom, mySecondCom);
+              restaurants.push(restoObject);
+              let ecritureComment = document.getElementsByClassName(
+                "writeComment"
+              );
+              restoObject.writeComment(ecritureComment);
 
-            }
-            
-            let monCom = response.result.reviews[0].text;
-            let monComNom = response.result.reviews[0].author_name;
-            mySecondCom = { com: monCom, auteur: monComNom };
+              // Appel de la fonction qui permet l'effet collapse sur les trois éléments voulu
+              Collapse("list-group-item");
+              Collapse("comStyle");
+              Collapse("writeComment");
+            });
 
-            let monThirdComText = response.result.reviews[1].text;
-            let monThirdComName = response.result.reviews[1].author_name;
-            monThirdCom = { com: monThirdComText, auteur: monThirdComName };
-
-
-
-            resto.push(monResto);
-            let restoObject = new Restaurant(restaurant.place_id, monResto);
-            restoObject.streetImage = image;
-            restoObject.setMarker(map);
-            restoObject.displayContent(myFirstCom, mySecondCom, monThirdCom);
-            restaurants.push(restoObject);
-            let ecritureComment = document.getElementsByClassName(
-              "writeComment"
-            );
-            restoObject.writeComment(ecritureComment);
-  
-            // Appel de la fonction qui permet l'effet collapse sur les trois éléments voulu
-            Collapse("list-group-item");
-            Collapse("comStyle");
-            Collapse("writeComment");
-          });
-
-          
-
-        const monResto = {
-          id: restaurant.place_id,
-          restaurantName: restaurant.name,
-          address: restaurant.vicinity,
-          lat: restaurant.geometry.location.lat,
-          long: restaurant.geometry.location.lng,
-          averageNote: restaurant.rating,
-        };
-
-        // console.log(resto);
-
-        
-      });
+          const monResto = {
+            id: restaurant.place_id,
+            restaurantName: restaurant.name,
+            address: restaurant.vicinity,
+            lat: restaurant.geometry.location.lat,
+            long: restaurant.geometry.location.lng,
+            averageNote: restaurant.rating,
+          };
+        });
+      }
     });
 }
 
@@ -233,19 +349,3 @@ function Collapse(params) {
     });
   }
 }
-
-
-/**
- * 
- * 
- * 
- * var divCommentaire = document.getElementsByClassName("nouveau");
-    var commentaire=  response.result.reviews; 
-  
-               for(var i = 0; i < items.length; i++) {     
-                           resto.comment =  response.result.reviews[i].text;  
-                            DivCommentaire[i].innerHTML = resto.comment;   
-                            myComment.push(resto.comment); 
-                                }
-                                
- */

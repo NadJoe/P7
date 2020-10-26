@@ -15,6 +15,20 @@
 <body>
     <h1>Avis'Restoo</h1>
     <br><br>
+    <div class="input-group mb-3">
+      <div class="input-group-prepend">
+        <label class="input-group-text" for="inputGroupSelect01"> Choisissez l'interval de note du restaurant !</label>
+      </div>
+      <select class="custom-select" id="inputGroupSelect01">
+        <option value="0">Toutes les notes</option>
+        <option value="1">De 0 à 1</option>
+        <option value="2">De 1 à 2</option>
+        <option value="3">De 2 à 3</option>
+        <option value="4">De 3 à 4</option>
+        <option value="5">De 4 à 5</option>
+      </select>
+    </div>
+    <br><br>
     <div id="conteneur">
         <div id="selection">
            <div class="moment"></div>
@@ -23,6 +37,9 @@
         <div id="map"></div>
 
     </div><br>
+
+
+    
 
 
 
@@ -39,6 +56,9 @@
             <form id="formNewRestaurant" onsubmit="return false">
               <div class="form-group">
                 <input type="text" class="form-control"  placeholder="Nom du restaurant" id="nom"> 
+              </div>
+              <div class="form-group">
+                <input type="text" class="form-control"  placeholder="Auteur" id="authorName"> 
               </div>
               <div class="form-group">
                 <input type="number" step="1" min="0" max="5" class="form-control"  placeholder="Note" id="note"> 
@@ -67,7 +87,15 @@
 
     
         <br><br><br>
+        <footer class="page-footer font-small blue">
+
+          <!-- Copyright -->
+          <div class="footer-copyright text-center py-3">© 2020 Copyright:
+            <a href=""> Nadèche JOSEPH</a>
+          </div>
+          <!-- Copyright -->
         
+        </footer>
 </body>
 
 </html>

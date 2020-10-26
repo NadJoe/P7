@@ -11,6 +11,7 @@ class Restaurant {
         this.averageNote = resto.averageNote;
         this.marker = null;
         this.comment = resto.comment;
+        
 
     }
 
@@ -44,7 +45,7 @@ class Restaurant {
      
 
 // Set informations
-     displayContent(){
+     displayContent(com, com2, com3){
 
         let content = `
                 <div class="list-group-item"> ${this.restaurantName} </div>
@@ -57,7 +58,17 @@ class Restaurant {
                     <div>${this.long}</div>
                     <div class="comStyle"> Les commentaires </div>
                     <div class="nouveau">
-                        ${this.comment}
+                    <ul>
+                         <li>
+                         <strong>${com.auteur}</strong> : ${com.com} 
+                        </li>
+                        <li>
+                         <strong>${com2.auteur}</strong> : ${com2.com} 
+                        </li>
+                        <li>
+                         <strong>${com3.auteur}</strong> : ${com3.com} 
+                        </li>
+                    </ul>
                     </div>
                     <p> Note moyenne : ${this.averageNote} </p>
                     <div class = "writeComment" > Ajouter un commentaire</div>

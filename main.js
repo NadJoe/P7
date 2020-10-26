@@ -3,6 +3,8 @@ let map, infoWindow, geocoder, service;
 let resto = new Array();
 let restaurants = new Array();
 let myComment = new Array();
+let monComEntier;
+let myCommentList = new Array();
 
 function initMap() {
   let pos = {};
@@ -21,8 +23,10 @@ function initMap() {
     navigator.geolocation.getCurrentPosition(
       function (position) {
         pos = {
-          lat: position.coords.latitude,
-          lng: position.coords.longitude,
+          //lat: position.coords.latitude,
+          //lng: position.coords.longitude,
+          lat: 48.85,
+          lng: 2.5667,
         };
 
         let infos = new google.maps.InfoWindow({
@@ -93,7 +97,6 @@ function initMap() {
       //let newAddressRestaurant = results[0].formatted_address;
 
       console.log(newRestaurantName);
-
       newResto.id = 0;
       newResto.restaurantName = newRestaurantName;
       newResto.lat = latNewResto;
@@ -153,6 +156,51 @@ function getFetch(lat, long) {
           restaurant.place_id +
           "&fields=name,rating,formatted_phone_number,reviews&key=AIzaSyC06sSZBdXw9TReabbXsFZ5e6ItlYbCZSA";
 
+
+
+          fetch(nouvelUrl)
+          .then((response) => response.json())
+          .then(function (response) {
+           let monTest = response.result.reviews;
+            for (const iterator of monTest) {
+              //console.log(iterator.text);
+               let monCom = iterator.text;
+               let monComNom = iterator.author_name;
+              
+               myFirstCom = { com: monCom, auteur: monComNom };
+              //myCommentList.push(monComEntier);
+
+            }
+            
+            let monCom = response.result.reviews[0].text;
+            let monComNom = response.result.reviews[0].author_name;
+            mySecondCom = { com: monCom, auteur: monComNom };
+
+            let monThirdComText = response.result.reviews[1].text;
+            let monThirdComName = response.result.reviews[1].author_name;
+            monThirdCom = { com: monThirdComText, auteur: monThirdComName };
+
+
+
+            resto.push(monResto);
+            let restoObject = new Restaurant(restaurant.place_id, monResto);
+            restoObject.streetImage = image;
+            restoObject.setMarker(map);
+            restoObject.displayContent(myFirstCom, mySecondCom, monThirdCom);
+            restaurants.push(restoObject);
+            let ecritureComment = document.getElementsByClassName(
+              "writeComment"
+            );
+            restoObject.writeComment(ecritureComment);
+  
+            // Appel de la fonction qui permet l'effet collapse sur les trois éléments voulu
+            Collapse("list-group-item");
+            Collapse("comStyle");
+            Collapse("writeComment");
+          });
+
+          
+
         const monResto = {
           id: restaurant.place_id,
           restaurantName: restaurant.name,
@@ -164,37 +212,7 @@ function getFetch(lat, long) {
 
         // console.log(resto);
 
-        fetch(nouvelUrl)
-          .then((response) => response.json())
-          .then(function (response) {
-            // for (let index = 0; index < 10; index++) {
-            //   console.log(response.result.reviews[index].text);
-
-            //   resto.comment = response.result.reviews[index].text;
-            //   document.querySelector(".nouveau").innerHTML += resto.comment;
-
-            //   //myComment.push(resto.comment);
-            //   console.log(resto);
-            // }
-            resto.push(monResto);
-            console.log(monResto);
-            let restoObject = new Restaurant(restaurant.place_id, monResto);
-            restoObject.streetImage = image;
-            restoObject.setMarker(map);
-            restoObject.displayContent();
-
-            restaurants.push(restoObject);
-
-            let ecritureComment = document.getElementsByClassName(
-              "writeComment"
-            );
-            restoObject.writeComment(ecritureComment);
-
-            // Appel de la fonction qui permet l'effet collapse sur les trois éléments voulu
-            Collapse("list-group-item");
-            Collapse("comStyle");
-            Collapse("writeComment");
-          });
+        
       });
     });
 }
@@ -215,3 +233,19 @@ function Collapse(params) {
     });
   }
 }
+
+
+/**
+ * 
+ * 
+ * 
+ * var divCommentaire = document.getElementsByClassName("nouveau");
+    var commentaire=  response.result.reviews; 
+  
+               for(var i = 0; i < items.length; i++) {     
+                           resto.comment =  response.result.reviews[i].text;  
+                            DivCommentaire[i].innerHTML = resto.comment;   
+                            myComment.push(resto.comment); 
+                                }
+                                
+ */

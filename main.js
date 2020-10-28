@@ -3,6 +3,7 @@ let resto = new Array();
 let restaurants = new Array();
 let resultat;
 let userChoice;
+let getResultat;
 
 function initMap() {
   let pos = {};
@@ -27,8 +28,8 @@ function initMap() {
           lng: 2.5667,
         };
 
-        let infos = new google.maps.InfoWindow({
-          // Information que contiendra l'infobulle sur le marker
+        // Information que contiendra l'infobulle sur le marker
+          let infos = new google.maps.InfoWindow({
           content: "<h2>Position Actuelle</h2>",
         });
 
@@ -38,9 +39,8 @@ function initMap() {
           icon:
             "https://developers.google.com/maps/documentation/javascript/examples/full/images/beachflag.png",
         });
-
+        // Quand l'utilisateur clique sur le marker, l'info apparait.
         marker.addListener("click", function () {
-          // Quand l'utilisateur clique sur le marker, l'info apparait.
           infos.open(map, marker);
         });
 
@@ -48,12 +48,13 @@ function initMap() {
 
         // Lorsque nous changeons la vue de la map et donc le centre, je recherche les restaurant autour du centre
         google.maps.event.addListener(map, "idle", function () {
+          // Nettoyer la map pour permettre l'affichage des markers
           restaurants.forEach((elt) => {
             elt.marker.setMap(null);
           });
-          resto = [];
+          // Reset l'affichage des restaurants dans la liste de gauche
           document.querySelector(".moment").innerHTML = "";
-
+          // Récupérer lat & lng du centre de la map pour pouvoir recupérer les restaurants de la zone
           let newLat = map.getCenter().lat();
           let newLng = map.getCenter().lng();
           getFetch(newLat, newLng);
@@ -70,6 +71,189 @@ function initMap() {
     handleLocationError(false, infoWindow, map.getCenter());
   }
 
+  // Appel à la fonction d'ajout restaurant au clic sur la map
+  ajoutRestoAuClic();
+}
+
+let cleApi = "AIzaSyC06sSZBdXw9TReabbXsFZ5e6ItlYbCZSA";
+function getFetch(lat, long) {
+  let restaurantLocation = "location=" + lat + "," + long;
+
+  const url =
+    "https://maps.googleapis.com/maps/api/place/nearbysearch/json?" +
+    restaurantLocation +
+    "&radius=1500&type=restaurant&key=" +
+    cleApi +
+    "";
+  fetch(url, { mode: "cors" })
+    .then((response) => response.json())
+    .then((result) => {
+
+    // récupération de la reponse avec une variable connu de tous pour pouvoir l'exploiter
+      getResultat = result;
+
+//  Initialisation par défault du résultat du filtre pour afficher tous les restaurants au chargement de la page
+      resultat = getResultat.results.filter(
+        (nouvel) => nouvel.rating >= 1 && nouvel.rating < 5
+      );
+      setChange(resultat);
+
+    });
+}
+
+// Appel à la fonction de gestion de filtre 
+setGestionFiltre();
+
+
+function setGestionFiltre(){
+
+  let FilterChoice = document.getElementById("inputGroupSelect01");
+  document.querySelector(".moment").innerHTML = "";
+
+  //////////////////////////////////// GESTION D'OUTIL DE FILTRAGE///////////////////////////////////
+  FilterChoice.addEventListener("change", (e) => {
+    // Récupération de la valeur de la liste à tester
+       userChoice = Number(e.target.value);
+
+    // Récupérer le choix de l'utilisateur et afficher les restaurants concernés
+      switch (userChoice) {
+        case 0:
+          restaurants.forEach((elt) => {
+            elt.marker.setMap(null);
+          });
+          document.querySelector(".moment").innerHTML = "";
+  
+          resultat = getResultat.results.filter(
+            (nouvel) => nouvel.rating >= userChoice && nouvel.rating <= userChoice+5
+          );
+          setChange(resultat);
+          break;
+        case 1:
+          // Reset de la map
+          restaurants.forEach((elt) => {
+            elt.marker.setMap(null);
+          });
+          document.querySelector(".moment").innerHTML = "";
+
+          resultat = getResultat.results.filter(
+            (nouvel) => nouvel.rating >= 0 && nouvel.rating <= userChoice
+          );
+          setChange(resultat);
+          break;
+        case 2:
+          // Reset de la map
+        restaurants.forEach((elt) => {
+          elt.marker.setMap(null);
+        });
+        document.querySelector(".moment").innerHTML = "";
+
+        resultat = getResultat.results.filter(
+          (nouvel) => nouvel.rating >= 1 && nouvel.rating <= userChoice
+        );
+        setChange(resultat);
+          break;
+        case 3:
+          // Reset de la map
+        restaurants.forEach((elt) => {
+          elt.marker.setMap(null);
+        });
+        document.querySelector(".moment").innerHTML = "";
+
+        resultat = getResultat.results.filter(
+          (nouvel) => nouvel.rating >= 2 && nouvel.rating <= userChoice
+        );
+        setChange(resultat);
+          break;
+        case 4:
+          // Reset de la map
+          restaurants.forEach((elt) => {
+            elt.marker.setMap(null);
+          });
+          document.querySelector(".moment").innerHTML = "";
+
+          resultat = getResultat.results.filter(
+            (nouvel) => nouvel.rating >= 3 && nouvel.rating <= userChoice
+          );
+          setChange(resultat);
+          break;
+        case 5:
+          // Reset de la map
+        restaurants.forEach((elt) => {
+          elt.marker.setMap(null);
+        });
+        document.querySelector(".moment").innerHTML = "";
+
+        resultat = getResultat.results.filter(
+          (nouvel) => nouvel.rating >= 4 && nouvel.rating <= userChoice
+        );
+        setChange(resultat);
+          break;
+      
+        default:
+          break;
+      }
+    
+    });
+
+}
+
+function setChange(myResult) {
+  myResult.forEach((restaurant) => {
+    let restoLocation = "location=" + resto.lat + "," + resto.long;
+    let image =
+    "https://maps.googleapis.com/maps/api/streetview?" +
+    restoLocation +
+    "&size=300x300&key=AIzaSyC06sSZBdXw9TReabbXsFZ5e6ItlYbCZSA";
+    const nouvelUrl =
+      "https://maps.googleapis.com/maps/api/place/details/json?place_id=" +
+      restaurant.place_id +
+      "&fields=name,rating,formatted_phone_number,reviews&key=AIzaSyC06sSZBdXw9TReabbXsFZ5e6ItlYbCZSA";
+
+    fetch(nouvelUrl)
+      .then((response) => response.json())
+      .then(function (response) {
+        //let monTest = response.result.reviews;
+        let myFirstComText = response.result.reviews[0].text;
+        let myFirstComName = response.result.reviews[0].author_name;
+        myFirstCom = { com: myFirstComText, auteur: myFirstComName };
+
+        let mySecondeComText = response.result.reviews[1].text;
+        let mySecondeComName = response.result.reviews[1].author_name;
+        mySecondCom = { com: mySecondeComText, auteur: mySecondeComName };
+
+        let myThirdComText = response.result.reviews[2].text;
+        let myThirdComName = response.result.reviews[2].author_name;
+        monThirdCom = { com: myThirdComText, auteur: myThirdComName };
+        
+        resto.push(monResto);
+        let restoObject = new Restaurant(restaurant.place_id, monResto);
+        restoObject.streetImage = image;
+        restoObject.setMarker(map);
+        restoObject.displayContent(myFirstCom, mySecondCom, monThirdCom);
+        restaurants.push(restoObject);
+        let ecritureComment = document.getElementsByClassName(
+          "writeComment"
+        );
+        restoObject.writeComment(ecritureComment);
+
+        // Appel de la fonction qui permet l'effet collapse sur les trois éléments voulu
+        Collapse("list-group-item");
+        Collapse("comStyle");
+        Collapse("writeComment");
+      });
+
+    const monResto = {
+      id: restaurant.place_id,
+      restaurantName: restaurant.name,
+      address: restaurant.vicinity,
+      lat: restaurant.geometry.location.lat,
+      long: restaurant.geometry.location.lng,
+      averageNote: restaurant.rating,
+    };
+  });
+}
+
+function ajoutRestoAuClic(){
   // ajouter un marker à n'importe quel endroit lors d'un clic sur la carte
   map.addListener("click", function (e) {
     let geocoder = new google.maps.Geocoder();
@@ -92,7 +276,6 @@ function initMap() {
       let latNewResto = clickPosition.lat();
       let longNewResto = clickPosition.lng();
       let newRestaurantName = document.getElementById("nom").value;
-      //let newAddressRestaurant = results[0].formatted_address;
 
       console.log(newRestaurantName);
       newResto.id = 0;
@@ -100,8 +283,6 @@ function initMap() {
       newResto.lat = latNewResto;
       newResto.long = longNewResto;
       newResto.averageNote = document.getElementById("note").value;
-      let auteurNom = document.getElementById("authorName").value;
-
 
       let monNouveauResto = new Restaurant(newResto.id, newResto);
 
@@ -117,6 +298,7 @@ function initMap() {
       monNouveauResto.setMarker(map);
       monNouveauResto.displayNewResto();
 
+
       // Ajout de commentaire
       let yesResto = document.getElementsByClassName("writeComment");
       monNouveauResto.writeComment(yesResto);
@@ -126,211 +308,7 @@ function initMap() {
       Collapse("writeComment");
     });
   });
-}
 
-let cleApi = "AIzaSyC06sSZBdXw9TReabbXsFZ5e6ItlYbCZSA";
-function getFetch(lat, long) {
-  var restaurantLocation = "location=" + lat + "," + long;
-
-  const url =
-    "https://maps.googleapis.com/maps/api/place/nearbysearch/json?" +
-    restaurantLocation +
-    "&radius=1500&type=restaurant&key=" +
-    cleApi +
-    "";
-  fetch(url, { mode: "cors" })
-    .then((response) => response.json())
-    .then((result) => {
-
-/******************************************************************************************************/
-//  Récupération de l'event de la liste pour le choix des restaurants à afficher
-      let FilterChoice = document.getElementById("inputGroupSelect01");
-
-//  Initialisation par défault du résultat du filtre pour afficher tous les restaurants au chargement de la page
-      resultat = resultat = result.results.filter(
-        (nouvel) => nouvel.rating >= 1 && nouvel.rating < 5
-      );
-      setChange(resultat);
-/******************************************************************************************************/
-
-
-
-    //////////////////////////////////// GESTION D'OUTIL DE FILTRAGE///////////////////////////////////
-    FilterChoice.addEventListener("change", (e) => {
-      // Récupération de la valeur de la liste à tester
-         userChoice = Number(e.target.value);
-
-        //resultat = result.results;
-
-        if (userChoice === 0) {
-          // Reset de la map
-          restaurants.forEach((elt) => {
-            elt.marker.setMap(null);
-          });
-          document.querySelector(".moment").innerHTML = "";
-
-          resultat = result.results.filter(
-            (nouvel) => nouvel.rating >= 1 && nouvel.rating <= 5
-          );
-          setChange(resultat);
-          console.log(userChoice);
-          for (const el of resultat) {
-            console.log(el.name);
-          }
-        } else if (userChoice === 1) {
-          // Reset de la map
-          restaurants.forEach((elt) => {
-            elt.marker.setMap(null);
-          });
-          document.querySelector(".moment").innerHTML = "";
-
-          resultat = result.results.filter(
-            (nouvel) => nouvel.rating >= 0 && nouvel.rating <= 1
-          );
-          setChange(resultat);
-
-        } else if (userChoice === 2) {
-          // Reset de la map
-          restaurants.forEach((elt) => {
-            elt.marker.setMap(null);
-          });
-          document.querySelector(".moment").innerHTML = "";
-
-          resultat = result.results.filter(
-            (nouvel) => nouvel.rating >= 1 && nouvel.rating <= 2
-          );
-          setChange(resultat);
-
-        } else if (userChoice === 3) {
-          // Reset de la map
-          restaurants.forEach((elt) => {
-            elt.marker.setMap(null);
-          });
-          document.querySelector(".moment").innerHTML = "";
-
-          resultat = result.results.filter(
-            (nouvel) => nouvel.rating >= 2 && nouvel.rating <= 3
-          );
-          setChange(resultat);
-
-        } else if (userChoice === 4) {
-
-            // Reset de la map
-              restaurants.forEach((elt) => {
-                elt.marker.setMap(null);
-              });
-              document.querySelector(".moment").innerHTML = "";
-
-              resultat = result.results.filter(
-                (nouvel) => nouvel.rating >= 3 && nouvel.rating <= 4
-              );
-              setChange(resultat);
- 
-        } else if (userChoice === 5) {
-          // Reset de la map
-          restaurants.forEach((elt) => {
-            elt.marker.setMap(null);
-          });
-          document.querySelector(".moment").innerHTML = "";
-
-          resultat = result.results.filter(
-            (nouvel) => nouvel.rating >= 4 && nouvel.rating <= 5
-          );
-          setChange(resultat);
-
-        } else {
-          resultat = result.results;
-          console.log(resultat);
-        }
-      });
-
-
-
-      
-        switch (userChoice) {
-          case 0:
-            console.log('0');
-            break;
-          case 1:
-            console.log('1');
-            break;
-          case 2:
-            console.log('2');
-            break;
-          case 3:
-            console.log('3');
-            break;
-          case 4:
-            console.log('4');
-            break;
-          case 5:
-            console.log('5');
-            break;
-          default:
-        }
-
-
-      function setChange(myResult) {
-        myResult.forEach((restaurant) => {
-          var restoLocation = "location=" + resto.lat + "," + resto.long;
-          let image =
-            "https://maps.googleapis.com/maps/api/streetview?" +
-            restoLocation +
-            "&size=300x300&key=" +
-            cleApi +
-            "";
-          const nouvelUrl =
-            "https://maps.googleapis.com/maps/api/place/details/json?place_id=" +
-            restaurant.place_id +
-            "&fields=name,rating,formatted_phone_number,reviews&key=AIzaSyC06sSZBdXw9TReabbXsFZ5e6ItlYbCZSA";
-
-          fetch(nouvelUrl)
-            .then((response) => response.json())
-            .then(function (response) {
-              let monTest = response.result.reviews;
-              for (const iterator of monTest) {
-                // console.log(iterator.text);
-                let monCom = iterator.text;
-                let monComNom = iterator.author_name;
-
-                myFirstCom = { com: monCom, auteur: monComNom };
-
-                //myCommentList.push(monComEntier);
-              }
-
-              let monCom = response.result.reviews[0].text;
-              let monComNom = response.result.reviews[0].author_name;
-              mySecondCom = { com: monCom, auteur: monComNom };
-
-              
-              resto.push(monResto);
-              let restoObject = new Restaurant(restaurant.place_id, monResto);
-              restoObject.streetImage = image;
-              restoObject.setMarker(map);
-              restoObject.displayContent(myFirstCom, mySecondCom);
-              restaurants.push(restoObject);
-              let ecritureComment = document.getElementsByClassName(
-                "writeComment"
-              );
-              restoObject.writeComment(ecritureComment);
-
-              // Appel de la fonction qui permet l'effet collapse sur les trois éléments voulu
-              Collapse("list-group-item");
-              Collapse("comStyle");
-              Collapse("writeComment");
-            });
-
-          const monResto = {
-            id: restaurant.place_id,
-            restaurantName: restaurant.name,
-            address: restaurant.vicinity,
-            lat: restaurant.geometry.location.lat,
-            long: restaurant.geometry.location.lng,
-            averageNote: restaurant.rating,
-          };
-        });
-      }
-    });
 }
 
 // FONCTION COLLAPSE AU CLIC SUR UN ÉLÉMENT

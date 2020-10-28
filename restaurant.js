@@ -9,19 +9,9 @@ class Restaurant {
         this.long = resto.long;
         this.averageNote = resto.averageNote;
         this.marker = null;
-        this.comment = resto.comment;
         
 
     }
-
-    // Methods Calcul note moyenne
-   getNoteMoyenne(rate){
-        let total = 0;
-        rate.forEach(elt=>{
-           total+= elt.stars;
-        });
-        return total/rate.length;
-     };
 
      // Initialisation du model de marker
      setMarker(map){
@@ -44,7 +34,7 @@ class Restaurant {
      
 
 // Set informations
-     displayContent(com, com2){
+     displayContent(com, com2, com3){
 
         let content = `
                 <div class="list-group-item"> ${this.restaurantName} </div>
@@ -57,14 +47,9 @@ class Restaurant {
                     <div>${this.long}</div>
                     <div class="comStyle"> Les commentaires </div>
                     <div class="nouveau">
-                    <ul>
-                        <li>
-                         <span>${com.auteur}</span> : ${com.com} 
-                        </li>
-                        <li>
-                         <span>${com2.auteur}</span> : ${com2.com} 
-                        </li>
-                    </ul>
+                        <p> <strong>${com.auteur}</strong> : ${com.com} </p>
+                        <p> <strong>${com2.auteur}</strong> : ${com2.com} </p>
+                        <p> <strong>${com3.auteur}</strong> : ${com3.com} </p>
                     </div>
                     <p> Note moyenne : ${this.averageNote} </p>
                     <div class = "writeComment" > Ajouter un commentaire</div>
@@ -87,7 +72,7 @@ class Restaurant {
                     <div>${this.long}</div>
                     <div class="comStyle"> Les commentaires </div>
                     <div class="nouveau">
-                        ${this.comment}
+                        
                     </div>
                     <p> Note moyenne : ${this.averageNote} </p>
                     <div class = "writeComment" > Ajouter un commentaire</div>
@@ -108,21 +93,21 @@ class Restaurant {
                   let writeInput = document.createElement('div');
                   writeInput.innerHTML = `<br><form id="formComment"> 
                                           <input type="number" placeholder="Notez le restaurant" step="1" min="0" max="5" id="votreNote">
+                                          <input placeholder=" Votre Nom " id="votreNom"> 
                                           <input placeholder=" Votre commentaire " id="votreCom"> 
                                           <input type="submit" value="Envoyer" >
                                        </form>`;
                                        params.target.parentNode.appendChild(writeInput);
                                        document.getElementById("formComment").addEventListener("submit", function (e) {
         
-                                        //console.log(params.target);
-        
                                           e.preventDefault();
                                           let laNote = document.getElementById("votreNote").value;
                                           let leCom = document.getElementById("votreCom").value;
+                                          let leNom = document.getElementById("votreNom").value;
                                           
                                           writeInput.parentNode.removeChild(writeInput);
         
-                                          let nvCom = `,<br> <div> <p> Note : ${laNote} </p>  <p> Comment : ${leCom} </p> </div> <br>`
+                                          let nvCom = `<div> <p> <strong>${leNom}</strong> : ${leCom} </p> </div> <br>`
  
                                           params.target.parentNode.querySelector(".nouveau").innerHTML += nvCom;
         

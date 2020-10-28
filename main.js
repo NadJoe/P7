@@ -4,6 +4,9 @@ let restaurants = new Array();
 let resultat;
 let userChoice;
 let getResultat;
+let monNouveauResto;
+let NewRestoNote;
+let tabNewResto = new Array();
 
 function initMap() {
   let pos = {};
@@ -58,6 +61,10 @@ function initMap() {
           let newLat = map.getCenter().lat();
           let newLng = map.getCenter().lng();
           getFetch(newLat, newLng);
+
+          /*if((NewRestoNote == userChoice)){
+           // monNouveauResto.displayNewResto();
+          }*/
         });
       },
       function () {
@@ -127,6 +134,9 @@ function setGestionFiltre(){
             (nouvel) => nouvel.rating >= userChoice && nouvel.rating <= userChoice+5
           );
           setChange(resultat);
+          // Affichage du nouveau restaurant en fonction de la note
+          monNouveauResto.setMarker(map);
+          monNouveauResto.displayNewResto();
           break;
         case 1:
           // Reset de la map
@@ -139,6 +149,10 @@ function setGestionFiltre(){
             (nouvel) => nouvel.rating >= 0 && nouvel.rating <= userChoice
           );
           setChange(resultat);
+          if((NewRestoNote >= 0) && (NewRestoNote <= 1)){
+            monNouveauResto.setMarker(map);
+            monNouveauResto.displayNewResto();
+          }
           break;
         case 2:
           // Reset de la map
@@ -151,6 +165,10 @@ function setGestionFiltre(){
           (nouvel) => nouvel.rating >= 1 && nouvel.rating <= userChoice
         );
         setChange(resultat);
+        if((NewRestoNote >= 1) && (NewRestoNote <= 2)){
+          monNouveauResto.setMarker(map);
+          monNouveauResto.displayNewResto();
+        }
           break;
         case 3:
           // Reset de la map
@@ -163,6 +181,10 @@ function setGestionFiltre(){
           (nouvel) => nouvel.rating >= 2 && nouvel.rating <= userChoice
         );
         setChange(resultat);
+        if((NewRestoNote >= 2) && (NewRestoNote <= 3)){
+          monNouveauResto.setMarker(map);
+          monNouveauResto.displayNewResto();
+        }
           break;
         case 4:
           // Reset de la map
@@ -175,6 +197,10 @@ function setGestionFiltre(){
             (nouvel) => nouvel.rating >= 3 && nouvel.rating <= userChoice
           );
           setChange(resultat);
+          if((NewRestoNote >= 3) && (NewRestoNote <= 4)){
+            monNouveauResto.setMarker(map);
+            monNouveauResto.displayNewResto();
+          }
           break;
         case 5:
           // Reset de la map
@@ -187,6 +213,12 @@ function setGestionFiltre(){
           (nouvel) => nouvel.rating >= 4 && nouvel.rating <= userChoice
         );
         setChange(resultat);
+
+        if((NewRestoNote >= 4) && (NewRestoNote <= 5)){
+          monNouveauResto.setMarker(map);
+          monNouveauResto.displayNewResto();
+        }
+        
           break;
       
         default:
@@ -270,6 +302,7 @@ function ajoutRestoAuClic(){
     });
 
     $("#formNewRestaurant").submit(function (e) {
+      
       $("#blocFormNewRestaurant").modal("hide"); // fermer le formulaire dès qu'il est envoyé
       e.preventDefault();
 
@@ -278,13 +311,16 @@ function ajoutRestoAuClic(){
       let newRestaurantName = document.getElementById("nom").value;
 
       console.log(newRestaurantName);
-      newResto.id = 0;
+      newResto.id = Math.floor(Math.random() * (10 - 1 + 1)) + 1;
       newResto.restaurantName = newRestaurantName;
       newResto.lat = latNewResto;
       newResto.long = longNewResto;
       newResto.averageNote = document.getElementById("note").value;
 
-      let monNouveauResto = new Restaurant(newResto.id, newResto);
+      // Variable globale pour recupérer la note et gérer l'affichage
+      NewRestoNote = document.getElementById("note").value;
+
+      monNouveauResto = new Restaurant(newResto.id, newResto);
 
       let imageNewResto = "location=" + newResto.lat + "," + newResto.long;
       let imageDuResto =
@@ -294,10 +330,12 @@ function ajoutRestoAuClic(){
 
       monNouveauResto.streetImage = imageDuResto;
 
+      // Push dans resto pour garder le resto dans le DOM au lieu de push dans restaurant
       restaurants.push(monNouveauResto);
+      tabNewResto.push(monNouveauResto);
       monNouveauResto.setMarker(map);
       monNouveauResto.displayNewResto();
-
+      console.log(tabNewResto);
 
       // Ajout de commentaire
       let yesResto = document.getElementsByClassName("writeComment");
